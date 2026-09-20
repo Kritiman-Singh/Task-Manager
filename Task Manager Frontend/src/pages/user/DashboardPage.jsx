@@ -26,13 +26,14 @@ export default function DashboardPage() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [editTask, setEditTask] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getDashboard();
       setDashboard(data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load dashboard");
     } finally {
       setLoading(false);
@@ -44,6 +45,16 @@ export default function DashboardPage() {
   const handleTaskSaved = () => load();
   const handleTaskDeleted = () => load();
   const handleStatusChanged = () => load();
+
+  const handleEdit = (task) => {
+    setEditTask(task);
+    setFormOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setFormOpen(false);
+    setEditTask(null);
+  };
 
   if (loading) {
     return (
@@ -131,7 +142,7 @@ export default function DashboardPage() {
               <TaskCard
                 key={task.taskId}
                 task={task}
-                onEdit={(t) => { /* handled inline */ }}
+                onEdit={handleEdit}
                 onDeleted={handleTaskDeleted}
                 onStatusChanged={handleStatusChanged}
               />
@@ -142,8 +153,9 @@ export default function DashboardPage() {
 
       <TaskFormDialog
         open={formOpen}
-        onClose={() => setFormOpen(false)}
+        onClose={handleFormClose}
         onSaved={handleTaskSaved}
+        existingTask={editTask}
       />
     </div>
   );

@@ -6,12 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useAuthStore } from "@/utils/auth";
 import toast from "react-hot-toast";
 import { User, KeyRound, Save } from "lucide-react";
 
 export default function SettingsPage() {
-  const authUser = useAuthStore((s) => s.user);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 

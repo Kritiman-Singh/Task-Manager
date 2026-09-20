@@ -31,7 +31,7 @@ export default function MyTasksPage() {
       const result = await searchTasks(params);
       setTasks(result.content || []);
       setTotalPages(result.totalPages || 0);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load tasks");
     } finally {
       setLoading(false);

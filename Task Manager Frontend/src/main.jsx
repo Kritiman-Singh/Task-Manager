@@ -22,6 +22,7 @@ import SettingsPage from "./pages/user/SettingsPage";
 // Auth guard
 import { useAuthStore } from "./utils/auth";
 
+// eslint-disable-next-line react-refresh/only-export-components
 function ProtectedRoute({ children }) {
   const status = useAuthStore((s) => s.status);
   if (status === "authenticating") {

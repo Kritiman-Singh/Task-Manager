@@ -1,0 +1,6 @@
+com\auth\services\DashboardServiceImplTest.class
+com\auth\services\StatisticsServiceImplTest.class
+com\auth\security\TaskSecurityIntegrationTest.class
+com\auth\AuthAppApplicationTests.class
+com\auth\services\UserProfileServiceImplTest.class
+com\auth\services\TaskServiceImplTest.class
