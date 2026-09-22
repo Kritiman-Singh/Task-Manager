@@ -23,6 +23,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -136,7 +138,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = jwtService.generateRefreshToken(user, refreshTokenOb.getJti());
         cookieService.attachRefreshCookie(response, refreshToken, (int) jwtService.getRefreshTtlSeconds());
 //        response.getWriter().write("Login successful");
-        response.sendRedirect(frontEndSuccessUrl);
+        // Cross-site (Render backend + Vercel frontend) browsers may block the
+        // third-party refresh cookie, so hand the refresh token to the SPA via
+        // the redirect URL as well. It is single-use: /auth/refresh rotates it
+        // immediately and the SPA replaces this history entry on login.
+        String separator = frontEndSuccessUrl.contains("?") ? "&" : "?";
+        String redirectUrl = frontEndSuccessUrl + separator
+                + "refreshToken=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+        response.sendRedirect(redirectUrl);
 
     }
 }

@@ -9,7 +9,13 @@ function OAuthSuccessPage() {
   useEffect(() => {
     async function fetchNewToken() {
       try {
-        const tokens = await refreshToken();
+        // Backend appends ?refreshToken=... to the redirect URL as a fallback
+        // for browsers blocking the cross-site refresh cookie.
+        const params = new URLSearchParams(window.location.search);
+        const urlRefreshToken = params.get("refreshToken");
+        const tokens = await refreshToken(
+          urlRefreshToken ? { refreshToken: urlRefreshToken } : undefined
+        );
         console.log("New tokens:", tokens);
         setSession({
           accessToken: tokens.accessToken,
