@@ -53,8 +53,14 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        // Frontend sirf `message` padhe tab bhi user ko samajh aaye,
+        // isliye pehla validation message hi message me bhejo.
+        String firstMessage = errors.values().stream()
+                .filter(msg -> msg != null && !msg.isBlank())
+                .findFirst()
+                .orElse("Validation failed");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.validationError("Validation failed", errors));
+                .body(ApiResponse.validationError(firstMessage, errors));
     }
 
     @ExceptionHandler(Exception.class)

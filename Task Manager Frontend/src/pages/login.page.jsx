@@ -12,6 +12,7 @@ import { Helmet } from "react-helmet";
 import { useAuthStore } from "@/utils/auth.js";
 import toast from "react-hot-toast";
 import { Alert, AlertTitle } from "@/components/ui/alert.jsx";
+import { getAuthErrorMessage } from "@/utils/auth.errors.js";
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +30,9 @@ export function LoginPage() {
       toast.success("Logged in successfully");
     } catch (err) {
       console.log(err);
-      setError(err?.response?.data?.message || "Something went wrong");
+      setError(
+        getAuthErrorMessage(err, "Invalid email or password. Please try again.")
+      );
     } finally {
       setLoading(false);
     }
