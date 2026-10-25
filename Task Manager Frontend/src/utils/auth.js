@@ -69,7 +69,9 @@ export const useAuthStore = create((set) => ({
       if (!silent) {
         await api.post("/auth/logout");
       }
-    } catch {}
+    } catch (e) {
+      console.log("Logout failed", e);
+    }
 
     localStorage.removeItem(TOKEN_KEY);
     set({ accessToken: null, user: null, status: "anonymous" });

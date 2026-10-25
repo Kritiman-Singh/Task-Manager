@@ -49,7 +49,10 @@ public class UserServiceImpl implements UserService {
 */
 
         User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser, UserDto.class);
+        UserDto result = modelMapper.map(savedUser, UserDto.class);
+        // Password hash kabhi API response me mat bhejo
+        result.setPassword(null);
+        return result;
     }
 
     @Override

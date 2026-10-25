@@ -13,6 +13,7 @@ import { signup } from "@/services/auth.service";
 import toast from "react-hot-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { getAuthErrorMessage } from "@/utils/auth.errors.js";
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,16 +24,35 @@ export default function RegisterPage() {
   const navigate = useNavigate(); // Placeholder for navigation function
   async function onSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    // Client-side validation — server tak galat request jane hi mat do,
+    // taaki "400 Bad Request" ki jagah seedha samajh aane wala message mile.
+    if (!name.trim()) {
+      setError("Please enter your name.");
+      return;
+    }
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+    if (!password || password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+    setLoading(true);
     try {
-      const r = await signup({ name, email, password });
+      const r = await signup({ name: name.trim(), email: email.trim(), password });
       console.log(r);
       toast.success("Account created successfully! Please log in.");
       navigate("/login");
     } catch (err) {
       console.log(err);
-      setError(err?.response?.data?.message || "Something went wrong");
+      setError(
+        getAuthErrorMessage(
+          err,
+          "Could not create account. Please check your details and try again."
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -90,13 +110,17 @@ export default function RegisterPage() {
             <Input
               id="reg-password"
               type="password"
-              placeholder="••••••••"
+              placeholder="Minimum 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={8}
               className="pl-9"
               autoComplete="new-password"
             />
+            <p className="text-xs text-muted-foreground">
+              Password must be at least 8 characters long.
+            </p>
           </div>
         </div>
 

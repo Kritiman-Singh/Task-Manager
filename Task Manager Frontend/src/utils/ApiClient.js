@@ -41,13 +41,31 @@ function resolveQueued(newToken) {
   pending = [];
 }
 
+// Login/register/refresh/logout khud 401 de sakte hain (galat password etc).
+// In par refresh-retry nahi karna — warna original error kho jata hai
+// aur UI par sahi message nahi dikhta.
+const SKIP_REFRESH_PATTERNS = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/logout",
+];
+
+function shouldSkipRefresh(url) {
+  if (!url || typeof url !== "string") return false;
+  return SKIP_REFRESH_PATTERNS.some((p) => url.includes(p));
+}
+
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
     const is401 = error.response?.status === 401;
 
-    if (!is401 || original._retry) return Promise.reject(error);
+    if (!is401 || !original || original._retry) return Promise.reject(error);
+    // Auth endpoints par refresh try mat karo — original error hi wapas do
+    // taaki login/register page sahi backend message dikha sake.
+    if (shouldSkipRefresh(original.url)) return Promise.reject(error);
     original._retry = true;
 
     // If a refresh is already running, wait for it
@@ -79,10 +97,14 @@ api.interceptors.response.use(
       original.headers.Authorization = `Bearer ${newToken}`;
       return api(original);
     } catch (err) {
-      // Refresh failed: clear auth and fail everyone waiting
+      // Refresh failed: clear auth and fail everyone waiting.
+      // NOTE: original error reject karo (refresh wala nahi) taaki
+      // login page par "Invalid Username or Password" jaisa sahi
+      // backend message dikhe.
+      console.warn("Token refresh failed", err?.response?.status);
       resolveQueued(null);
       useAuthStore.getState().logout({ silent: true });
-      return Promise.reject(err);
+      return Promise.reject(error);
     } finally {
       isRefreshing = false;
     }

@@ -17,7 +17,9 @@ export const getCurrentUser = async () => {
 };
 
 //refresh new access token using refresh token
-export const refreshToken = async () => {
-  const res = await api.post("/auth/refresh");
+//body is optional: { refreshToken } — used by OAuth callback when the
+//cross-site refresh cookie is blocked by the browser
+export const refreshToken = async (body) => {
+  const res = await api.post("/auth/refresh", body ?? {});
   return res.data;
 };

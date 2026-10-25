@@ -34,7 +34,7 @@ export default function Navbar() {
             className="inline-block h-6 w-6 rounded-md bg-gradient-to-br from-primary to-primary/40"
             aria-hidden
           />
-          <span className="text-base tracking-tight">Auth App</span>
+          <span className="text-base tracking-tight">TaskFlow</span>
         </NavLink>
 
         {/* Desktop actions */}
@@ -127,7 +127,7 @@ export default function Navbar() {
                     className="inline-block h-6 w-6 rounded-md bg-gradient-to-br from-primary to-primary/40"
                     aria-hidden
                   />
-                  <span>Auth App</span>
+                    <span>TaskFlow</span>
                 </SheetTitle>
               </SheetHeader>
 

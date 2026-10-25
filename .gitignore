@@ -1,0 +1,19 @@
+# Java / Maven
+**/target/
+**/.idea/
+**/*.iml
+
+# Environment / secrets
+**/.env
+**/.env.*
+
+# Logs
+**/*.log
+
+# Node
+**/node_modules/
+**/dist/
+
+# OS
+.DS_Store
+Thumbs.db
